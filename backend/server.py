@@ -7,7 +7,7 @@ CORS(app)
 
 # Connect to MongoDB
 client = MongoClient("mongodb://localhost:27017")
-db = client.syncorsink  # Database name
+db = client.syncorsink  # Replace with your database name
 
 @app.route("/")
 def home():
