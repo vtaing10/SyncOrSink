@@ -1,0 +1,17 @@
+# Python Virtual Environment
+venv/
+
+# Python Cache Files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment Variables
+.env
+
+# Logs
+*.log
+
+# IDE / Debugging
+*.swp

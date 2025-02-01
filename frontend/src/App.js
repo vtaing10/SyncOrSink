@@ -5,9 +5,10 @@ function App() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-      fetch("http://localhost:5000/") // Make sure the URL matches your backend setup
+      fetch("http://127.0.0.1:5000/")
           .then((response) => response.json())
           .then((data) => {
+              console.log("Backend response:", data);
               setMessage(data.message);
           })
           .catch((error) => {
@@ -15,6 +16,7 @@ function App() {
               setMessage("Failed to connect to the backend.");
           });
   }, []);
+  
   
 
     return (
