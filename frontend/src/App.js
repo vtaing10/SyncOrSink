@@ -5,17 +5,17 @@ function App() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        // Fetch data from the backend
-        fetch("http://localhost:5000/")
-            .then((response) => response.json())
-            .then((data) => {
-                setMessage(data.message);
-            })
-            .catch((error) => {
-                console.error("Error connecting to backend:", error);
-                setMessage("Failed to connect to the backend.");
-            });
-    }, []);
+      fetch("http://localhost:5000/") // Make sure the URL matches your backend setup
+          .then((response) => response.json())
+          .then((data) => {
+              setMessage(data.message);
+          })
+          .catch((error) => {
+              console.error("Error connecting to backend:", error);
+              setMessage("Failed to connect to the backend.");
+          });
+  }, []);
+  
 
     return (
         <div className="App">
