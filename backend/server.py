@@ -59,7 +59,7 @@ def logout():
 def profile():
     user = session.get("user")
     if not user:
-        return redirect(url_for("login"))
+        return jsonify({"error": "User not logged in"}), 401
     return jsonify(user)
 
 if __name__ == "__main__":
