@@ -1,30 +1,38 @@
-from flask import Blueprint, redirect, url_for
-from authlib.integrations.flask_client import OAuth
 import os
+from authlib.integrations.flask_client import OAuth
+from flask import Blueprint, redirect, url_for, session
 
 auth_bp = Blueprint("auth", __name__)
 
+# Initialize OAuth
 oauth = OAuth()
 
-oauth.register(
-    name="google",
+# Register the Google OAuth client
+google = oauth.register(
+    name='google',
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-    access_token_url="https://accounts.google.com/o/oauth2/token",
-    authorize_url="https://accounts.google.com/o/oauth2/auth",
-    api_base_url="https://www.googleapis.com/oauth2/v1/",
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    api_base_url='https://www.googleapis.com/oauth2/v3/',
     client_kwargs={
-        "scope": "openid email profile"
-    }
+        'scope': 'openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+    },
 )
 
 @auth_bp.route("/login")
 def login():
-    redirect_uri = url_for("auth.callback", _external=True)
-    return oauth.google.authorize_redirect(redirect_uri)
+    redirect_uri = url_for("auth.auth_callback", _external=True)
+    return google.authorize_redirect(redirect_uri)
 
 @auth_bp.route("/auth/callback")
-def callback():
-    token = oauth.google.authorize_access_token()
-    user_info = oauth.google.get("userinfo").json()
-    return user_info
+def auth_callback():
+    token = google.authorize_access_token()
+    user_info = google.get("https://www.googleapis.com/oauth2/v3/userinfo").json()  # Fetch user info from Google
+    session["user"] = user_info
+    return redirect("/")
+
+@auth_bp.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect("/")
