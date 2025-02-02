@@ -1,29 +1,25 @@
-from flask import Blueprint, jsonify, session
-from authlib.integrations.flask_client import OAuth
+import logging
 import requests
+from flask import Blueprint, jsonify, session
 
 calendar_bp = Blueprint("calendar", __name__)
 
 @calendar_bp.route("/events", methods=["GET"])
 def fetch_calendar_events():
-    # Ensure the user is logged in
-    user = session.get("user")
-    if not user:
-        return jsonify({"error": "User not logged in"}), 401
-
-    # Get the access token
     token = session.get("token")
     if not token:
+        logging.error("Access token missing from session.")
         return jsonify({"error": "Missing access token"}), 401
 
-    # Fetch events from Google Calendar API
     headers = {"Authorization": f"Bearer {token['access_token']}"}
     response = requests.get(
-        "https://www.googleapis.com/calendar/v3/calendars/primary/events", headers=headers
+        "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+        headers=headers,
     )
+    logging.debug(f"Google Calendar API response: {response.status_code} - {response.text}")
 
     if response.status_code == 200:
-        events = response.json()
-        return jsonify(events)
+        return jsonify(response.json())
     else:
+        logging.error("Failed to fetch events")
         return jsonify({"error": "Failed to fetch events", "details": response.json()}), response.status_code

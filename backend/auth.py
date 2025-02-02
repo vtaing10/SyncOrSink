@@ -46,25 +46,17 @@ def logout():
 
 @auth_bp.route("/auth/callback")
 def auth_callback():
-    logging.debug("Auth callback endpoint hit.")
     token = google.authorize_access_token()
-    logging.debug(f"Access token received: {token}")
+    session["token"] = token  # Save token in session
     user_info = google.get("https://www.googleapis.com/oauth2/v3/userinfo").json()
-    logging.debug(f"User info fetched: {user_info}")
-    session["user"] = user_info
-    session["token"]=token
-
-    # Redirect back to the React frontend
-    logging.debug("Redirecting to React frontend.")
+    session["user"] = user_info  # Save user info in session
     return redirect(f"http://localhost:3000?email={user_info['email']}&name={user_info['name']}")
 
 @auth_bp.route("/user")
 def get_user():
-    logging.debug("User endpoint hit.")
     user = session.get("user")
     if user:
-        logging.debug(f"User retrieved from session: {user}")
         return jsonify(user)
     else:
-        logging.debug("No user found in session.")
         return jsonify({"error": "No user is logged in"}), 401
+

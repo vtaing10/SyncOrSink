@@ -74,25 +74,26 @@ function App() {
     };
 
     const fetchEvents = () => {
-        console.log("Fetching Google Calendar events...");
-        fetch("http://127.0.0.1:5000/events", {
-            method: "GET",
-            credentials: "include",
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error("Failed to fetch events");
-            })
-            .then((data) => {
-                console.log("Fetched events:", data);
-                setEvents(data.items || []);
-            })
-            .catch((error) => {
-                console.error("Error fetching events:", error);
-            });
-    };
+      console.log("Fetching Google Calendar events...");
+      fetch("http://127.0.0.1:5000/events", {
+          method: "GET",
+          credentials: "include", // Include cookies for session
+      })
+          .then((response) => {
+              if (response.ok) {
+                  return response.json();
+              }
+              throw new Error("Failed to fetch events");
+          })
+          .then((data) => {
+              console.log("Fetched events:", data);
+              setEvents(data.items || []);
+          })
+          .catch((error) => {
+              console.error("Error fetching events:", error);
+          });
+  };
+  
 
     return (
         <div className="App">
