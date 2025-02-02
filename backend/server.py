@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from auth import auth_bp
 from authlib.integrations.flask_client import OAuth
+from GoogleCal import calendar_bp
 
 # Load environment variables
 load_dotenv()
@@ -18,6 +19,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_cred
 
 # Register the auth blueprint
 app.register_blueprint(auth_bp)
+app.register_blueprint(calendar_bp)
 
 # Initialize OAuth
 oauth = OAuth(app)

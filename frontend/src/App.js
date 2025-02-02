@@ -4,6 +4,7 @@ import "./App.css";
 function App() {
     const [message, setMessage] = useState(""); // Message from the backend
     const [user, setUser] = useState(null); // User data
+    const [events, setEvents] = useState([]); // Calendar events
 
     useEffect(() => {
         console.log("App mounted. Checking for query parameters.");
@@ -18,19 +19,19 @@ function App() {
         } else {
             console.log("No query parameters found. Fetching user from backend.");
             fetch("http://127.0.0.1:5000/user")
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error("User not logged in");
-            })
-            .then((userData) => {
-                console.log("User Data:", userData);
-                setUser(userData);
-            })
-            .catch((error) => {
-                console.error("Error fetching user data:", error);
-            });
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error("User not logged in");
+                })
+                .then((userData) => {
+                    console.log("User Data:", userData);
+                    setUser(userData);
+                })
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                });
         }
 
         console.log("Fetching welcome message from backend.");
@@ -52,28 +53,46 @@ function App() {
     };
 
     const handleLogout = () => {
-      fetch("http://127.0.0.1:5000/logout", {
-          method: "POST", // Ensure POST method is used
-          credentials: "include", // Include cookies/session info
-          headers: {
-              "Content-Type": "application/json", // Set the correct headers
-          },
-      })
-          .then((response) => {
-              if (response.ok) {
-                  setUser(null); // Clear user state on successful logout
-                  console.log("Logged out successfully");
-              } else {
-                  throw new Error("Logout failed");
-              }
-          })
-          .catch((error) => {
-              console.error("Error logging out:", error);
-          });
-  };
-  
-  
-  
+        fetch("http://127.0.0.1:5000/logout", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (response.ok) {
+                    setUser(null);
+                    console.log("Logged out successfully");
+                } else {
+                    throw new Error("Logout failed");
+                }
+            })
+            .catch((error) => {
+                console.error("Error logging out:", error);
+            });
+    };
+
+    const fetchEvents = () => {
+        console.log("Fetching Google Calendar events...");
+        fetch("http://127.0.0.1:5000/events", {
+            method: "GET",
+            credentials: "include",
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Failed to fetch events");
+            })
+            .then((data) => {
+                console.log("Fetched events:", data);
+                setEvents(data.items || []);
+            })
+            .catch((error) => {
+                console.error("Error fetching events:", error);
+            });
+    };
 
     return (
         <div className="App">
@@ -85,6 +104,19 @@ function App() {
                         <h2>Welcome, {user.name}!</h2>
                         <p>Email: {user.email}</p>
                         <button onClick={handleLogout}>Logout</button>
+                        <button onClick={fetchEvents}>Fetch Google Calendar Events</button>
+                        {events.length > 0 && (
+                            <div>
+                                <h3>Upcoming Events:</h3>
+                                <ul>
+                                    {events.map((event) => (
+                                        <li key={event.id}>
+                                            <strong>{event.summary}</strong> - {event.start?.dateTime || event.start?.date}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div>

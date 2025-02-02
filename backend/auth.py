@@ -23,8 +23,9 @@ google = oauth.register(
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={
-        'scope': 'openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
-    },
+    'scope': 'openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar.readonly',
+},
+
 )
 
 @auth_bp.route("/login")
@@ -51,6 +52,7 @@ def auth_callback():
     user_info = google.get("https://www.googleapis.com/oauth2/v3/userinfo").json()
     logging.debug(f"User info fetched: {user_info}")
     session["user"] = user_info
+    session["token"]=token
 
     # Redirect back to the React frontend
     logging.debug("Redirecting to React frontend.")
