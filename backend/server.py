@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "your_default_secret_key")  # Ensure SECRET_KEY is set
 
 # Enable CORS
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
 # Register the auth blueprint
 app.register_blueprint(auth_bp)

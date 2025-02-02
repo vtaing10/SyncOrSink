@@ -52,19 +52,28 @@ function App() {
     };
 
     const handleLogout = () => {
-        console.log("Logout button clicked. Logging out.");
-        fetch("http://127.0.0.1:5000/logout", {
-            method: "POST",
-            credentials: "include",
-        })
-            .then(() => {
-                console.log("Logged out successfully.");
-                setUser(null);
-            })
-            .catch((error) => {
-                console.error("Error logging out:", error);
-            });
-    };
+      fetch("http://127.0.0.1:5000/logout", {
+          method: "POST", // Ensure POST method is used
+          credentials: "include", // Include cookies/session info
+          headers: {
+              "Content-Type": "application/json", // Set the correct headers
+          },
+      })
+          .then((response) => {
+              if (response.ok) {
+                  setUser(null); // Clear user state on successful logout
+                  console.log("Logged out successfully");
+              } else {
+                  throw new Error("Logout failed");
+              }
+          })
+          .catch((error) => {
+              console.error("Error logging out:", error);
+          });
+  };
+  
+  
+  
 
     return (
         <div className="App">

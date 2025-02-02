@@ -34,12 +34,14 @@ def login():
     logging.debug(f"Redirect URI: {redirect_uri}")
     return google.authorize_redirect(redirect_uri)
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout", methods=["POST"])
 def logout():
     logging.debug("Logout endpoint hit.")
-    session.pop("user", None)
+    session.clear()  # Clear the session
     logging.debug("User session cleared.")
-    return redirect("http://localhost:3000")
+    return jsonify({"message": "Logged out successfully"}), 200
+
+
 
 @auth_bp.route("/auth/callback")
 def auth_callback():
