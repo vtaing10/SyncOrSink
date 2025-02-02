@@ -3,11 +3,21 @@ import "./App.css";
 
 function App() {
     const [message, setMessage] = useState(""); // Message from the backend
-    const [user, setUser] = useState(null); // User data from the backend
+    const [user, setUser] = useState(null); // User data
 
     useEffect(() => {
-        // Fetch user data to check if someone is logged in
-        fetch("http://127.0.0.1:5000/user")
+        console.log("App mounted. Checking for query parameters.");
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get("email");
+        const name = params.get("name");
+
+        if (email && name) {
+            console.log("Query parameters found:", { email, name });
+            setUser({ email, name });
+            window.history.replaceState({}, document.title, "/");
+        } else {
+            console.log("No query parameters found. Fetching user from backend.");
+            fetch("http://127.0.0.1:5000/user")
             .then((response) => {
                 if (response.ok) {
                     return response.json();
@@ -21,8 +31,9 @@ function App() {
             .catch((error) => {
                 console.error("Error fetching user data:", error);
             });
+        }
 
-        // Fetch a welcome message or connection message from the backend
+        console.log("Fetching welcome message from backend.");
         fetch("http://127.0.0.1:5000/")
             .then((response) => response.json())
             .then((data) => {
@@ -36,17 +47,19 @@ function App() {
     }, []);
 
     const handleLogin = () => {
+        console.log("Login button clicked. Redirecting to login.");
         window.location.href = "http://127.0.0.1:5000/login";
     };
 
     const handleLogout = () => {
+        console.log("Logout button clicked. Logging out.");
         fetch("http://127.0.0.1:5000/logout", {
             method: "POST",
             credentials: "include",
         })
             .then(() => {
+                console.log("Logged out successfully.");
                 setUser(null);
-                console.log("Logged out successfully");
             })
             .catch((error) => {
                 console.error("Error logging out:", error);
@@ -61,11 +74,6 @@ function App() {
                 {user ? (
                     <div>
                         <h2>Welcome, {user.name}!</h2>
-                        <img
-                            src={user.picture}
-                            alt="User profile"
-                            style={{ borderRadius: "50%", width: "100px", height: "100px" }}
-                        />
                         <p>Email: {user.email}</p>
                         <button onClick={handleLogout}>Logout</button>
                     </div>
