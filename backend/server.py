@@ -36,6 +36,7 @@ google = oauth.register(
 # Initialize MongoDB client
 client = MongoClient(os.getenv("MONGO_URI"))
 db = client[os.getenv("MONGO_DB_NAME", "syncorsink")]
+>>>>>>> 9c9422fd833f785f31dc4839a707d452822c0e95
 
 # Routes
 @app.route("/")

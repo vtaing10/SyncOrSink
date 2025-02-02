@@ -15,6 +15,9 @@ __pycache__/
 
 # IDE / Debugging
 *.swp
+<<<<<<< HEAD
+=======
 backend/auth.py
 backend/config.py
 backend/.env
+>>>>>>> 9c9422fd833f785f31dc4839a707d452822c0e95
